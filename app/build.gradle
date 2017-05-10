@@ -33,10 +33,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:25.3.1'
 
     // GSON with Retrofit
-    compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    compile 'com.squareup.retrofit2:converter-scalars:2.2.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
 
     // Fast code generation
@@ -50,4 +47,13 @@ dependencies {
 
     //material dialogs
     compile 'com.afollestad.material-dialogs:core:0.9.4.4'
+
+    // Retrofit XML converter (Simple)
+    compile ('com.squareup.retrofit2:converter-simplexml:2.2.0'){
+        exclude group: 'xpp3', module: 'xpp3'
+        exclude group: 'stax', module: 'stax-api'
+        exclude group: 'stax', module: 'stax'
+    }
+
+    compile 'org.greenrobot:eventbus:3.0.0'
 }
