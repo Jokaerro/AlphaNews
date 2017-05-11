@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        startService(new Intent(this, AlphaNewsSync.class));
+//        startService(new Intent(this, AlphaNewsSync.class));
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()

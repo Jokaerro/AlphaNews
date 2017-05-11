@@ -33,6 +33,26 @@ public class NewsItem implements Parcelable {
     public NewsItem() {
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPubDate(String pubDate) {
+        this.pubDate = pubDate;
+    }
+
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+
     public String getTitle() {
         return title;
     }

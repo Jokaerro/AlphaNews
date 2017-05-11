@@ -1,9 +1,12 @@
 package pro.games_box.alphanews;
 
+import com.evernote.android.job.JobManager;
 import com.facebook.stetho.Stetho;
 
 import android.app.Application;
 import android.content.Context;
+
+import pro.games_box.alphanews.service.AlphaNewsJobCreator;
 
 /**
  * Created by Tesla on 10.05.2017.
@@ -19,6 +22,7 @@ public class AlphaNewsApplication extends Application {
         if (BuildConfig.DEBUG) {
             stethoInit();
         }
+        JobManager.create(this).addJobCreator(new AlphaNewsJobCreator());
     }
 
     private void stethoInit() {

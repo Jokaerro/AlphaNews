@@ -1,5 +1,6 @@
 package pro.games_box.alphanews.ui.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pro.games_box.alphanews.R;
+import pro.games_box.alphanews.db.DataMapper;
 import pro.games_box.alphanews.model.NewsItem;
 import pro.games_box.alphanews.ui.activity.MainActivity;
 import pro.games_box.alphanews.ui.adapter.NewsPagerAdapter;
@@ -26,11 +28,15 @@ import pro.games_box.alphanews.ui.adapter.NewsPagerAdapter;
 public class NewsDetailFragment extends Fragment {
     private List<NewsItem> currentNews;
     private int currentId;
+    private static DataMapper dataMapper = new DataMapper();
     @BindView(R.id.pager) ViewPager pager;
 
-    public static NewsDetailFragment newInstance(List<NewsItem> news, int position) {
+    public static NewsDetailFragment newInstance(Cursor cursor, int position) {
         final NewsDetailFragment fragment = new NewsDetailFragment();
-        ArrayList<NewsItem> tmp = new ArrayList<>(news);
+        ArrayList<NewsItem> tmp = new ArrayList<>();
+        while (cursor.moveToNext()){
+            tmp.add(dataMapper.fromCursorNewsItem(cursor));
+        }
         Bundle args = new Bundle();
         args.putInt("position", position);
         args.putParcelableArrayList("data", tmp);

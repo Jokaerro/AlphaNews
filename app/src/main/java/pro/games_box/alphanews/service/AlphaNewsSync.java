@@ -5,6 +5,8 @@ import org.greenrobot.eventbus.Subscribe;
 
 import android.app.IntentService;
 import android.app.Service;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +21,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import pro.games_box.alphanews.api.Api;
+import pro.games_box.alphanews.db.AlphaNewsContract;
+import pro.games_box.alphanews.db.DataMapper;
 import pro.games_box.alphanews.model.NewsFeedEvent;
 import pro.games_box.alphanews.model.response.NewsItemResponse;
 import pro.games_box.alphanews.ui.activity.MainActivity;
@@ -27,26 +31,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AlphaNewsSync extends Service {
-    public static final long REQUEST_INTERVAL = 60 * 1000 * 6; // 6 minutes
-    private Timer timer = null;
-    private Handler handler = new Handler();
-    private Runnable handlerTask ;
+    private Context context;
+    private DataMapper dataMapper = new DataMapper();
     private Thread thread;
 
     public AlphaNewsSync() { }
 
     @Override
     public void onCreate() {
-        EventBus.getDefault().register(this);
-        // cancel if already existed
-        if (timer != null) {
-            timer.cancel();
-        } else {
-            // recreate new
-            timer = new Timer();
-        }
-
-
+        context = getApplicationContext();
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -57,34 +50,7 @@ public class AlphaNewsSync extends Service {
                 }
             }
         });
-
-        // schedule task
-        timer.scheduleAtFixedRate(new NewsRequestTimerTask(), 0,
-                REQUEST_INTERVAL);
-    }
-
-    @Subscribe
-    public void onEvent(NewsFeedEvent event) throws IOException {
-        requestRss();
-    }
-
-    private void runOnUiThread(Runnable runnable) {
-        handler.post(runnable);
-    }
-
-
-    class NewsRequestTimerTask extends TimerTask {
-        @Override
-        public void run() {
-            thread.start();
-        }
-
-//        private String getDateTime() {
-//            // get date time in custom format
-//            SimpleDateFormat sdf = new SimpleDateFormat(
-//                    "[dd/MM/yyyy - HH:mm:ss]", Locale.getDefault());
-//            return sdf.format(new Date());
-//        }
+        thread.start();
     }
 
     @Override
@@ -102,6 +68,14 @@ public class AlphaNewsSync extends Service {
         Response<NewsItemResponse> response = call.execute();
         NewsItemResponse newsItemResponse = ((Response<NewsItemResponse>) response).body();
 
-        EventBus.getDefault().post(newsItemResponse.getChannel().getItems());
+        if(response.isSuccessful()) {
+            for (int i = 0; i < newsItemResponse.getChannel().getItems().size(); i++) {
+                ContentValues dailyValue = dataMapper.fromNewsItemsResponse(newsItemResponse.getChannel().getItems().get(i));
+
+                context.getContentResolver()
+                        .insert(AlphaNewsContract.FeedEntry.CONTENT_URI, dailyValue);
+            }
+        }
+
     }
 }
