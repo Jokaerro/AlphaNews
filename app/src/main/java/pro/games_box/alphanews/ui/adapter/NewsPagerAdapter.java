@@ -58,9 +58,9 @@ public class NewsPagerAdapter extends PagerAdapter{
 
         pubDate.setText(news.get(position).getPubDate());
         pubTitle.setText(news.get(position).getTitle());
-        webView.loadData(news.get(position).getDescription(), "text/html; charset=utf-8", "UTF-8");
-//        webView.getSettings().setJavaScriptEnabled(true);
-//        webView.loadUrl(news.get(position).getLink());
+//        webView.loadData(news.get(position).getDescription(), "text/html; charset=utf-8", "UTF-8");
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl(news.get(position).getLink());
         ((ViewPager) container).addView(itemView);
 
         return itemView;

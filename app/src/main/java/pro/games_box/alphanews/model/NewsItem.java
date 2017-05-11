@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 @Root(name = "item")
 public class NewsItem implements Parcelable {
-    @Element(name = "title", required = false)
+    @Element(name = "title", required = false, data = true)
     private String title;
 
     @Element(name = "link", required = false)

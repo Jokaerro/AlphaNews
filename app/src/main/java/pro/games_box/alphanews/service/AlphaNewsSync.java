@@ -65,17 +65,21 @@ public class AlphaNewsSync extends Service {
 
     public void requestRss() throws IOException {
         Log.d(">>>>>>>>>>","REQUEST");
-        Call<NewsItemResponse> call = Api.getApiService().getFeed(1, 2, 21);
-        Response<NewsItemResponse> response = call.execute();
-        NewsItemResponse newsItemResponse = ((Response<NewsItemResponse>) response).body();
+        try {
+            Call<NewsItemResponse> call = Api.getApiService().getFeed(1, 2, 21);
+            Response<NewsItemResponse> response = call.execute();
+            NewsItemResponse newsItemResponse = ((Response<NewsItemResponse>) response).body();
 
-        if(response.isSuccessful()) {
-            for (int i = 0; i < newsItemResponse.getChannel().getItems().size(); i++) {
-                ContentValues dailyValue = dataMapper.fromNewsItemsResponse(newsItemResponse.getChannel().getItems().get(i));
+            if (response.isSuccessful()) {
+                for (int i = 0; i < newsItemResponse.getChannel().getItems().size(); i++) {
+                    ContentValues dailyValue = dataMapper.fromNewsItemsResponse(newsItemResponse.getChannel().getItems().get(i));
 
-                context.getContentResolver()
-                        .insert(AlphaNewsContract.FeedEntry.CONTENT_URI, dailyValue);
+                    context.getContentResolver()
+                            .insert(AlphaNewsContract.FeedEntry.CONTENT_URI, dailyValue);
+                }
             }
+        } catch (Exception ex) {
+            Log.d("BAD RESPONSE","" + ex.getMessage());
         }
         stopSelf();
 

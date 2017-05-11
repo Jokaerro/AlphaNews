@@ -10,7 +10,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pro.games_box.alphanews.R;
 import pro.games_box.alphanews.model.NewsItem;
-import pro.games_box.alphanews.model.response.NewsItemResponse;
 
 /**
  * Created by Tesla on 10.05.2017.

@@ -41,7 +41,7 @@ public class AlphaNewsAdapter extends RecyclerView.Adapter<NewsHolder>{
         dataValid = data != null;
         rowIdColumn = dataValid ? cursor.getColumnIndex(BaseColumns._ID) : -1;
         application = AlphaNewsApplication.getInstance();
-        if (cursor  != null)
+        if (cursor != null)
             cursor.registerDataSetObserver(dataSetObserver);
     }
 
@@ -130,7 +130,6 @@ public class AlphaNewsAdapter extends RecyclerView.Adapter<NewsHolder>{
         }
         return 0;
     }
-
 
     @Override
     public int getItemCount() {
