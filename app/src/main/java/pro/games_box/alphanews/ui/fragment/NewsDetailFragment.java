@@ -3,6 +3,7 @@ package pro.games_box.alphanews.ui.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import pro.games_box.alphanews.R;
 import pro.games_box.alphanews.model.NewsItem;
+import pro.games_box.alphanews.ui.activity.MainActivity;
+import pro.games_box.alphanews.ui.adapter.NewsPagerAdapter;
 
 /**
  * Created by Tesla on 10.05.2017.
@@ -22,6 +26,7 @@ import pro.games_box.alphanews.model.NewsItem;
 public class NewsDetailFragment extends Fragment {
     private List<NewsItem> currentNews;
     private int currentId;
+    @BindView(R.id.pager) ViewPager pager;
 
     public static NewsDetailFragment newInstance(List<NewsItem> news, int position) {
         final NewsDetailFragment fragment = new NewsDetailFragment();
@@ -41,6 +46,9 @@ public class NewsDetailFragment extends Fragment {
         currentNews = getArguments().getParcelableArrayList("data");
         currentId = getArguments().getInt("position");
 
+        NewsPagerAdapter pagerAdapter = new NewsPagerAdapter(getContext(), currentNews);
+        pager.setAdapter(pagerAdapter);
+        pager.setCurrentItem(currentId);
         return rootView;
     }
 }

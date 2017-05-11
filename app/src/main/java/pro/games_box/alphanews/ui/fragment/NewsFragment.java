@@ -55,11 +55,12 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         feedRecycler.setLayoutManager(llm);
 
         feedRecycler.setAdapter(alphaNewsAdapter);
+
         swipeRefreshLayout.setOnRefreshListener(this);
+        EventBus.getDefault().register(this);
 
         return rootView;
     }
-
 
     @Override
     public void onRefresh() {
