@@ -30,6 +30,8 @@ public class AlphaNewsSync extends Service {
     public static final long REQUEST_INTERVAL = 60 * 1000 * 6; // 6 minutes
     private Timer timer = null;
     private Handler handler = new Handler();
+    private Runnable handlerTask ;
+    private Thread thread;
 
     public AlphaNewsSync() { }
 
@@ -43,6 +45,19 @@ public class AlphaNewsSync extends Service {
             // recreate new
             timer = new Timer();
         }
+
+
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    requestRss();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         // schedule task
         timer.scheduleAtFixedRate(new NewsRequestTimerTask(), 0,
                 REQUEST_INTERVAL);
@@ -53,20 +68,15 @@ public class AlphaNewsSync extends Service {
         requestRss();
     }
 
-    class NewsRequestTimerTask extends TimerTask {
+    private void runOnUiThread(Runnable runnable) {
+        handler.post(runnable);
+    }
 
+
+    class NewsRequestTimerTask extends TimerTask {
         @Override
         public void run() {
-            new Thread(new Runnable(){
-                @Override
-                public void run() {
-                    try {
-                        requestRss();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+            thread.start();
         }
 
 //        private String getDateTime() {

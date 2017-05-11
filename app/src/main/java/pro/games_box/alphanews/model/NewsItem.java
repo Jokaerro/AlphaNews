@@ -2,13 +2,19 @@ package pro.games_box.alphanews.model;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Serializer;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 
 /**
  * Created by Tesla on 10.05.2017.
  */
 
 @Root(name = "item")
-public class NewsItem {
+public class NewsItem implements Parcelable {
     @Element(name = "title", required = false)
     private String title;
 
@@ -46,4 +52,37 @@ public class NewsItem {
     public String getGuid() {
         return guid;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(title);
+        parcel.writeString(link);
+        parcel.writeString(pubDate);
+        parcel.writeString(guid);
+    }
+
+    protected NewsItem(Parcel in) {
+        title = in.readString();
+        link = in.readString();
+        description = in.readString();
+        pubDate = in.readString();
+        guid = in.readString();
+    }
+
+    public static final Creator<NewsItem> CREATOR = new Creator<NewsItem>() {
+        @Override
+        public NewsItem createFromParcel(Parcel in) {
+            return new NewsItem(in);
+        }
+
+        @Override
+        public NewsItem[] newArray(int size) {
+            return new NewsItem[size];
+        }
+    };
 }

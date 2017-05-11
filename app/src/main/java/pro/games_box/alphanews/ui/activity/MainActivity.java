@@ -24,19 +24,18 @@ import butterknife.ButterKnife;
 import pro.games_box.alphanews.R;
 import pro.games_box.alphanews.model.NewsFeedEvent;
 import pro.games_box.alphanews.model.NewsItem;
+import pro.games_box.alphanews.model.ReceiverReadyEvent;
 import pro.games_box.alphanews.model.response.NewsItemResponse;
 import pro.games_box.alphanews.service.AlphaNewsSync;
 import pro.games_box.alphanews.ui.adapter.AlphaNewsAdapter;
+import pro.games_box.alphanews.ui.fragment.NewsDetailFragment;
+import pro.games_box.alphanews.ui.fragment.NewsFragment;
 
 import static java.security.AccessController.getContext;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
+public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.main_recycler) RecyclerView feedRecycler;
-    @BindView(R.id.swipeRefreshLayout) SwipeRefreshLayout swipeRefreshLayout;
-
-    private AlphaNewsAdapter alphaNewsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +44,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         startService(new Intent(this, AlphaNewsSync.class));
-        alphaNewsAdapter = new AlphaNewsAdapter(this, null);
 
-        feedRecycler.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        feedRecycler.setLayoutManager(llm);
-
-        feedRecycler.setAdapter(alphaNewsAdapter);
-
-        swipeRefreshLayout.setOnRefreshListener(this);
-        EventBus.getDefault().register(this);
-
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.root_layout, NewsFragment.newInstance(), "main")
+                    .commit();
+        }
     }
 
     @Override
@@ -78,29 +73,5 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    @Override
-    public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(false);
-                EventBus.getDefault().post(new NewsFeedEvent("Give me little bite!"));
-            }
-        }, 1000);
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(List<NewsItem> littleBiteNews) {
-        alphaNewsAdapter = new AlphaNewsAdapter(this, littleBiteNews);
-        feedRecycler.swapAdapter(alphaNewsAdapter, true);
     }
 }

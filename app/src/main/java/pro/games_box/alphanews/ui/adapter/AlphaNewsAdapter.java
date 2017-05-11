@@ -14,7 +14,9 @@ import pro.games_box.alphanews.AlphaNewsApplication;
 import pro.games_box.alphanews.R;
 import pro.games_box.alphanews.model.NewsItem;
 import pro.games_box.alphanews.model.response.NewsItemResponse;
+import pro.games_box.alphanews.ui.activity.MainActivity;
 import pro.games_box.alphanews.ui.adapter.holder.NewsHolder;
+import pro.games_box.alphanews.ui.fragment.NewsDetailFragment;
 
 /**
  * Created by Tesla on 10.05.2017.
@@ -46,7 +48,11 @@ public class AlphaNewsAdapter extends RecyclerView.Adapter<NewsHolder>{
         holder.newsCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Clicked:" + news.get(holder.getAdapterPosition()).getTitle(), Toast.LENGTH_SHORT).show();
+                ((MainActivity) context).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.root_layout, NewsDetailFragment.newInstance(news, holder.getAdapterPosition()), "newsDetail")
+                        .addToBackStack("main")
+                        .commit();
             }
         });
     }
