@@ -64,6 +64,7 @@ public class AlphaNewsSync extends Service {
     }
 
     public void requestRss() throws IOException {
+        Log.d(">>>>>>>>>>","REQUEST");
         Call<NewsItemResponse> call = Api.getApiService().getFeed(1, 2, 21);
         Response<NewsItemResponse> response = call.execute();
         NewsItemResponse newsItemResponse = ((Response<NewsItemResponse>) response).body();
@@ -76,6 +77,7 @@ public class AlphaNewsSync extends Service {
                         .insert(AlphaNewsContract.FeedEntry.CONTENT_URI, dailyValue);
             }
         }
+        stopSelf();
 
     }
 }

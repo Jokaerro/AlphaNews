@@ -4,6 +4,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,11 +25,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pro.games_box.alphanews.AlphaNewsApplication;
 import pro.games_box.alphanews.R;
 import pro.games_box.alphanews.db.AlphaNewsContract;
 import pro.games_box.alphanews.model.NewsFeedEvent;
 import pro.games_box.alphanews.model.NewsItem;
 import pro.games_box.alphanews.model.ReceiverReadyEvent;
+import pro.games_box.alphanews.service.AlphaNewsSync;
 import pro.games_box.alphanews.ui.adapter.AlphaNewsAdapter;
 
 /**
@@ -42,7 +45,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @BindView(R.id.swipeRefreshLayout) SwipeRefreshLayout swipeRefreshLayout;
 
     private AlphaNewsAdapter alphaNewsAdapter;
-    private List<NewsItem> news;
+    AlphaNewsApplication inst = AlphaNewsApplication.getInstance();
 
     public static NewsFragment newInstance() {
         final NewsFragment fragment = new NewsFragment();
@@ -76,7 +79,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             @Override
             public void run() {
                 swipeRefreshLayout.setRefreshing(false);
-
+                inst.startService(new Intent(inst.getAppContext(), AlphaNewsSync.class));
             }
         }, 1000);
 
