@@ -42,7 +42,6 @@ public class AlphaNewsProvider extends ContentProvider {
                         @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         Cursor retCursor;
         switch (uriMatcher.match(uri)) {
-            // "weather/*/*"
             case NEWS: {
                 retCursor = openHelper.getReadableDatabase().query(
                         AlphaNewsContract.FeedEntry.TABLE_NAME,

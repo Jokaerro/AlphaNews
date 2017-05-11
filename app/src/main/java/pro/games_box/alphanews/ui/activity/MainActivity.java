@@ -1,41 +1,21 @@
 package pro.games_box.alphanews.ui.activity;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import pro.games_box.alphanews.R;
-import pro.games_box.alphanews.model.NewsFeedEvent;
-import pro.games_box.alphanews.model.NewsItem;
-import pro.games_box.alphanews.model.ReceiverReadyEvent;
-import pro.games_box.alphanews.model.response.NewsItemResponse;
-import pro.games_box.alphanews.service.AlphaNewsSync;
-import pro.games_box.alphanews.ui.adapter.AlphaNewsAdapter;
-import pro.games_box.alphanews.ui.fragment.NewsDetailFragment;
+import pro.games_box.alphanews.ui.fragment.AboutFragment;
 import pro.games_box.alphanews.ui.fragment.NewsFragment;
-
-import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.toolbar) public Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +48,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_about) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.root_layout, AboutFragment.newInstance(), "about")
+                    .addToBackStack("main")
+                    .commit();
         }
 
         return super.onOptionsItemSelected(item);

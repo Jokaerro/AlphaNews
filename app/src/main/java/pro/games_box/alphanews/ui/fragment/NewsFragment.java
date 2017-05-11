@@ -32,6 +32,7 @@ import pro.games_box.alphanews.model.NewsFeedEvent;
 import pro.games_box.alphanews.model.NewsItem;
 import pro.games_box.alphanews.model.ReceiverReadyEvent;
 import pro.games_box.alphanews.service.AlphaNewsSync;
+import pro.games_box.alphanews.ui.activity.MainActivity;
 import pro.games_box.alphanews.ui.adapter.AlphaNewsAdapter;
 
 /**
@@ -57,7 +58,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.news_fragment, container, false);
         ButterKnife.bind(this, rootView);
-
+        ((MainActivity) getActivity()).getSupportActionBar().show();
         alphaNewsAdapter = new AlphaNewsAdapter(getContext(), null);
 
         feedRecycler.setHasFixedSize(true);

@@ -34,6 +34,10 @@ public class NewsDetailFragment extends Fragment {
     public static NewsDetailFragment newInstance(Cursor cursor, int position) {
         final NewsDetailFragment fragment = new NewsDetailFragment();
         ArrayList<NewsItem> tmp = new ArrayList<>();
+        if(cursor.moveToFirst())
+            tmp.add(dataMapper.fromCursorNewsItem(cursor));
+        else
+            return null;
         while (cursor.moveToNext()){
             tmp.add(dataMapper.fromCursorNewsItem(cursor));
         }
