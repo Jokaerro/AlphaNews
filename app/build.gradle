@@ -55,7 +55,7 @@ dependencies {
         exclude group: 'stax', module: 'stax'
     }
 
-    compile 'org.greenrobot:eventbus:3.0.0'
-
     compile 'com.evernote:android-job:1.1.10'
+
+    compile 'com.koushikdutta.ion:ion:2.+'
 }

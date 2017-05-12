@@ -1,8 +1,5 @@
 package pro.games_box.alphanews.service;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import android.app.IntentService;
 import android.app.Service;
 import android.content.ContentValues;

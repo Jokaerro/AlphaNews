@@ -1,9 +1,5 @@
 package pro.games_box.alphanews.ui.fragment;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;

@@ -12,7 +12,7 @@ import pro.games_box.alphanews.db.AlphaNewsContract.FeedEntry;
  */
 
 public class AlphaNewsDbHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     static final String DATABASE_NAME = "rssfeed.db";
 
     public AlphaNewsDbHelper(Context context) {

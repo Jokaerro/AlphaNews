@@ -13,7 +13,7 @@ public class DataMapper {
     public ContentValues fromNewsItemsResponse(NewsItem item){
         ContentValues newsItemValue = new ContentValues();
         newsItemValue.put(AlphaNewsContract.FeedEntry.COLUMN_PUB_DATE, item.getPubDate());
-        newsItemValue.put(AlphaNewsContract.FeedEntry.COLUMN_GUID, item.getGuid());
+        newsItemValue.put(AlphaNewsContract.FeedEntry.COLUMN_GUID, item.getGuid().substring(item.getGuid().length() - 10));
         newsItemValue.put(AlphaNewsContract.FeedEntry.COLUMN_TITLE, item.getTitle());
         newsItemValue.put(AlphaNewsContract.FeedEntry.COLUMN_LINK, item.getLink());
         newsItemValue.put(AlphaNewsContract.FeedEntry.COLUMN_TEXT, item.getDescription());

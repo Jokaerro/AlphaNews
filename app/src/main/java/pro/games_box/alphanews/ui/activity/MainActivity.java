@@ -11,6 +11,7 @@ import butterknife.ButterKnife;
 
 import pro.games_box.alphanews.R;
 import pro.games_box.alphanews.ui.fragment.AboutFragment;
+import pro.games_box.alphanews.ui.fragment.BookmarksFragment;
 import pro.games_box.alphanews.ui.fragment.NewsFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.root_layout, AboutFragment.newInstance(), "about")
+                    .addToBackStack("main")
+                    .commit();
+        }
+
+        if (id == R.id.action_cache) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.root_layout, BookmarksFragment.newInstance(), "cache")
                     .addToBackStack("main")
                     .commit();
         }
