@@ -83,7 +83,7 @@ public class NewsPagerAdapter extends PagerAdapter{
                 false);
 
         ButterKnife.bind(this, itemView);
-        currentPosition = position;
+        currentPosition = position - 1;
         pubDate.setText(news.get(position).getPubDate());
         pubTitle.setText(news.get(position).getTitle());
 
@@ -94,7 +94,8 @@ public class NewsPagerAdapter extends PagerAdapter{
             book.setVisibility(View.GONE);
             share.setVisibility(View.GONE);
             String cacheFile = readFile(news.get(position).getGuid());
-            webView.loadData(cacheFile, "text/html; charset=utf-8", "UTF-8");
+            webView.loadData(cacheFile, "text/html; charset=UTF-8", "UTF-8");
+//            webView.loadData(cacheFile, "text/html; charset=WINDOWS-1251", "WINDOWS-1251");
         }
         ((ViewPager) container).addView(itemView);
 
@@ -103,7 +104,7 @@ public class NewsPagerAdapter extends PagerAdapter{
 
     private String readFile(String fileName){
         String result = "";
-        File cacheDir = context.getCacheDir();
+        File cacheDir = context.getFilesDir();
         File tmpFile = new File(cacheDir.getPath() + "/" + fileName) ;
 
         String line="";

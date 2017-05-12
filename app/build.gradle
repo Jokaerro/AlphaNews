@@ -57,5 +57,5 @@ dependencies {
 
     compile 'com.evernote:android-job:1.1.10'
 
-    compile 'com.koushikdutta.ion:ion:2.+'
+    compile 'com.squareup.okhttp3:okhttp:3.7.0'
 }

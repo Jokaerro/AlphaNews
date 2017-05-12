@@ -59,7 +59,7 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == LOADER_ID) {
-            File directory = getContext().getCacheDir();
+            File directory = getContext().getFilesDir();
             ArrayList<String> fileNames = new ArrayList<>();
             String selection = "";
             if(directory.listFiles().length > 0){
