@@ -2,6 +2,7 @@ package pro.games_box.alphanews;
 
 import com.evernote.android.job.JobManager;
 import com.facebook.stetho.Stetho;
+import com.vk.sdk.VKSdk;
 
 import android.app.Application;
 import android.content.Context;
@@ -23,6 +24,7 @@ public class AlphaNewsApplication extends Application {
             stethoInit();
         }
         JobManager.create(this).addJobCreator(new AlphaNewsJobCreator());
+        VKSdk.initialize(getInstance().getApplicationContext());
     }
 
     private void stethoInit() {

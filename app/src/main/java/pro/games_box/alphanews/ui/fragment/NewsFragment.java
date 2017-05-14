@@ -10,6 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -55,7 +56,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         View rootView = inflater.inflate(R.layout.news_fragment, container, false);
         ButterKnife.bind(this, rootView);
         ((MainActivity) getActivity()).getSupportActionBar().show();
-        alphaNewsAdapter = new AlphaNewsAdapter(getContext(), null);
+        alphaNewsAdapter = new AlphaNewsAdapter(getContext(), null, false);
 
         feedRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -64,6 +65,13 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         feedRecycler.setAdapter(alphaNewsAdapter);
 
         swipeRefreshLayout.setOnRefreshListener(this);
+
+        ActionBar actionBar =  ((MainActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.news);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
 
         getLoaderManager().initLoader(NEWS_LOADER_ID, null, this);
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="about_title">Andrew Tesla</string>
-    <string name="about_description">Android developer, handsome engineer</string>
-    <string name="about_email_me">email me on c407@mail.ru</string>
+    <string name="about_title" translatable="false">Andrew Tesla</string>
+    <string name="about_description" translatable="false">Android developer, handsome engineer</string>
+    <string name="about_email_me" translatable="false">email me on c407@mail.ru</string>
 </resources>

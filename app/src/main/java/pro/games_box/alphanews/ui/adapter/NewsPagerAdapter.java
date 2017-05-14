@@ -1,10 +1,25 @@
 package pro.games_box.alphanews.ui.adapter;
 
+import com.facebook.CallbackManager;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
+import com.joaquimley.faboptions.FabOptions;
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKScope;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.VKServiceActivity;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.dialogs.VKShareDialog;
+import com.vk.sdk.dialogs.VKShareDialogBuilder;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.design.widget.FloatingActionButton;
+import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
@@ -15,25 +30,20 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pro.games_box.alphanews.AlphaNewsApplication;
 import pro.games_box.alphanews.R;
 import pro.games_box.alphanews.model.NewsItem;
 import pro.games_box.alphanews.service.AlphaNewsPageDownloader;
@@ -43,26 +53,42 @@ import pro.games_box.alphanews.service.AlphaNewsPageDownloader;
  */
 
 public class NewsPagerAdapter extends PagerAdapter{
+    private static final String VKACCOUNT_TOKEN = "VKACCOUNT_TOKEN";
+
     private Context context;
     private List<NewsItem> news;
     private LayoutInflater inflater;
     private int currentPosition;
+    private boolean cache;
 
     private ConnectivityManager myConnMgr;
     private NetworkInfo networkinfo;
+    private View thisView;
+    private AlphaNewsApplication appInstance;
+    private Fragment parent;
+
+    private SharedPreferences alphaPreferences;
+    private String vkToken = "";
+
+    CallbackManager callbackManager;
+    ShareDialog shareDialog;
 
     @BindView(R.id.news_detail_pub_date) TextView pubDate;
     @BindView(R.id.news_detail_title) TextView pubTitle;
     @BindView(R.id.web_view) WebView webView;
-    @BindView(R.id.fab) FloatingActionButton book;
-    @BindView(R.id.share) FloatingActionButton share;
+    @BindView(R.id.fab_options) FabOptions fabOptions;
 
-    public NewsPagerAdapter(Context context, List<NewsItem> littleBiteNews) {
+    public NewsPagerAdapter(Context context, List<NewsItem> littleBiteNews, boolean cacheView, Fragment parent) {
         this.context = context;
         this.news = littleBiteNews;
-
+        this.cache = cacheView;
+        this.parent = parent;
+        appInstance = AlphaNewsApplication.getInstance();
         this.myConnMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         this.networkinfo = myConnMgr.getActiveNetworkInfo();
+
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(parent);
     }
 
     @Override
@@ -87,18 +113,19 @@ public class NewsPagerAdapter extends PagerAdapter{
         pubDate.setText(news.get(position).getPubDate());
         pubTitle.setText(news.get(position).getTitle());
 
-        if (networkinfo != null && networkinfo.isConnected()) {
+        alphaPreferences = context.getSharedPreferences("alpha_main", Context.MODE_PRIVATE);
+        vkToken = alphaPreferences.getString(VKACCOUNT_TOKEN, "");
+
+        if (!cache) {
             webView.getSettings().setJavaScriptEnabled(true);
             webView.loadUrl(news.get(position).getLink());
         } else {
-            book.setVisibility(View.GONE);
-            share.setVisibility(View.GONE);
+            fabOptions.setVisibility(View.GONE);
             String cacheFile = readFile(news.get(position).getGuid());
             webView.loadData(cacheFile, "text/html; charset=UTF-8", "UTF-8");
-//            webView.loadData(cacheFile, "text/html; charset=WINDOWS-1251", "WINDOWS-1251");
         }
         ((ViewPager) container).addView(itemView);
-
+        thisView = itemView;
         return itemView;
     }
 
@@ -117,7 +144,6 @@ public class NewsPagerAdapter extends PagerAdapter{
                 text.append(line+"\n");
             }
             result = text.toString();
-            Log.d("FILE>>>", result);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }catch(IOException e){
@@ -126,12 +152,88 @@ public class NewsPagerAdapter extends PagerAdapter{
         return result;
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
+            @Override
+            public void onResult(VKAccessToken res) {
+                String token = res.accessToken;
+                SharedPreferences.Editor editor = alphaPreferences.edit();
+                editor.putString(VKACCOUNT_TOKEN, token);
+                editor.apply();
+                vkShare();
+            }
+
+            @Override
+            public void onError(VKError error) {
+                Toast.makeText(context, "Error access", Toast.LENGTH_SHORT);
+            }
+        }));
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         ((ViewPager) container).removeView((LinearLayout) object);
     }
 
-    @OnClick(R.id.share)
+    @OnClick(R.id.action_facebook)
+    public void facebookShare(){
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+            ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                    .setContentTitle(news.get(currentPosition).getTitle())
+                    .setContentDescription(news.get(currentPosition).getDescription())
+                    .setContentUrl(Uri.parse(news.get(currentPosition).getLink()))
+                    .build();
+
+            shareDialog.show(linkContent);
+        }
+    }
+
+    @OnClick(R.id.action_vk)
+    public void vkShare(){
+        if(VKSdk.isLoggedIn()) {
+            VKShareDialogBuilder builder = new VKShareDialogBuilder();
+            builder.setText(Html.fromHtml(news.get(currentPosition).getDescription()));
+            builder.setAttachmentLink(news.get(currentPosition).getTitle(),
+                    news.get(currentPosition).getLink());
+            builder.setShareDialogListener(new VKShareDialog.VKShareDialogListener() {
+                @Override
+                public void onVkShareComplete(int postId) {
+                    // recycle bitmap if need
+                    VKSdk.logout();
+                }
+
+                @Override
+                public void onVkShareCancel() {
+                    // recycle bitmap if need
+                }
+
+                @Override
+                public void onVkShareError(VKError error) {
+                    // recycle bitmap if need
+                }
+            });
+            builder.show(parent.getFragmentManager(), "VK_SHARE_DIALOG");
+        } else {
+            makeShareVk();
+        }
+    }
+
+    private void makeShareVk(){
+        Intent intent = new Intent(context, VKServiceActivity.class);
+        intent.putExtra("arg1", "Authorization");
+        ArrayList scopes = new ArrayList<>();
+        scopes.add(VKScope.FRIENDS);
+        scopes.add(VKScope.WALL);
+        scopes.add(VKScope.PHOTOS);
+        scopes.add(VKScope.OFFLINE);
+        scopes.add(VKScope.EMAIL);
+        intent.putStringArrayListExtra("arg2", scopes);
+        intent.putExtra("arg4", VKSdk.isCustomInitialize());
+        parent.startActivityForResult(intent, VKServiceActivity.VKServiceType.Authorization.getOuterCode());
+    }
+
+    @OnClick(R.id.action_share)
     public void simpleShare(){
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -143,12 +245,11 @@ public class NewsPagerAdapter extends PagerAdapter{
         context.startActivity(sendIntent);
     }
 
-    @OnClick(R.id.fab)
-    public void cachePage(){
+    @OnClick(R.id.action_book)
+    public void bookPage(){
         if (networkinfo != null && networkinfo.isConnected()) {
             try {
                 downloadOneUrl(news.get(currentPosition).getLink(), news.get(currentPosition).getGuid());
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,10 +35,12 @@ public class AlphaNewsAdapter extends RecyclerView.Adapter<NewsHolder>{
     private boolean dataValid;
     private int rowIdColumn;
     private DataMapper dataMapper = new DataMapper();
+    private boolean cache;
 
-    public AlphaNewsAdapter(Context context, Cursor data) {
+    public AlphaNewsAdapter(Context context, Cursor data, boolean cacheView) {
         this.context = context;
         cursor = data;
+        cache = cacheView;
         dataValid = data != null;
         rowIdColumn = dataValid ? cursor.getColumnIndex(BaseColumns._ID) : -1;
         application = AlphaNewsApplication.getInstance();
@@ -72,11 +75,28 @@ public class AlphaNewsAdapter extends RecyclerView.Adapter<NewsHolder>{
             public void onClick(View view) {
                 ((MainActivity) context).getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.root_layout, NewsDetailFragment.newInstance(cursor, holder.getAdapterPosition()), "newsDetail")
+                        .replace(R.id.root_layout, NewsDetailFragment.newInstance(cursor, holder.getAdapterPosition(), cache), "newsDetail")
                         .addToBackStack("main")
                         .commit();
             }
         });
+        if(cache) {
+//            holder.unBook.setVisibility(View.VISIBLE);
+            holder.unBook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    File directory = context.getFilesDir();
+                    if(directory.listFiles().length > 0) {
+                        for(int i = 0; i < directory.listFiles().length; i++){
+                            if(directory.listFiles()[i].getName().equals(item.getGuid().substring(item.getGuid().length() - 10))) {
+                                directory.listFiles()[i].delete();
+                                notifyDataSetChanged();
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     protected Cursor getCursor() {

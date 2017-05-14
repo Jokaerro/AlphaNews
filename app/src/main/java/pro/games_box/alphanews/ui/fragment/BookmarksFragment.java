@@ -7,9 +7,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -44,7 +47,7 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
         View rootView = inflater.inflate(R.layout.news_fragment, container, false);
         ButterKnife.bind(this, rootView);
         ((MainActivity) getActivity()).getSupportActionBar().show();
-        alphaNewsAdapter = new AlphaNewsAdapter(getContext(), null);
+        alphaNewsAdapter = new AlphaNewsAdapter(getContext(), null, true);
 
         feedRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -52,8 +55,32 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
 
         feedRecycler.setAdapter(alphaNewsAdapter);
 
+        ActionBar actionBar =  ((MainActivity) getActivity()).getSupportActionBar();
+        setHasOptionsMenu(true);
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.action_cache);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
+
         getLoaderManager().initLoader(LOADER_ID, null, this);
         return rootView;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+                getFragmentManager().popBackStack();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
     }
 
     @Override
@@ -70,6 +97,8 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
                 }
                 selection = selection.substring(0, selection.length() - 1);
                 selection += ")";
+            } else {
+                return null;
             }
 
             return new CursorLoader(getContext(), AlphaNewsContract.FeedEntry.buildNewsId(),

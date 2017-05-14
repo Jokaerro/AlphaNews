@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -19,6 +20,7 @@ public class NewsHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.news_card_pubdate) TextView newsCardPubdate;
     @BindView(R.id.news_card_title) TextView newsCardTitle;
     @BindView(R.id.news_card) public CardView newsCard;
+    @BindView(R.id.not_viewed) public ImageView unBook;
 
     public Context context;
     public NewsHolder(View itemView) {

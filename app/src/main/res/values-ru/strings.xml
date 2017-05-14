@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">АльфаНовости</string>
+    <string name="action_about">О себе</string>
+    <string name="action_cache">Избранное</string>
+    <string name="action_login">Логин</string>
+    <string name="news">Новости</string>
+    <string name="news_details">Подробнее</string>
+</resources>

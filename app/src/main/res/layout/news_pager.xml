@@ -28,28 +28,21 @@
         android:layout_height="match_parent"
         android:layout_marginTop="5dp"
         >
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginRight="72dp"
-            android:layout_marginBottom="16dp"
-            app:srcCompat="@drawable/ic_share"
-            />
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@drawable/ic_bookmark_border"
-            />
         <WebView
             android:id="@+id/web_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
             />
+        <com.joaquimley.faboptions.FabOptions
+            android:id="@+id/fab_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            app:button_menu="@menu/menu_sharing"
+            app:background_color="@color/colorPrimaryDark"
+            app:fab_color="@color/colorPrimary"/>
     </FrameLayout>
 
 </LinearLayout>

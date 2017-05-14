@@ -60,68 +60,23 @@ public class AlphaNewsPageDownloader extends IntentService {
                     .url(myUrl)
                     .build();
 
-
             Response response = client.newCall(request).execute();
-                String output = response.body().string();
+            String output = response.body().string();
 
-                File file = new File(context.getFilesDir(), guid.substring(guid.length() - 10));
-                FileWriter fw = new FileWriter(file.getAbsoluteFile());
-                fw.write(output);
-                fw.close();
+            File file = new File(context.getFilesDir(), guid.substring(guid.length() - 10));
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            fw.write(output);
+            fw.close();
 
-
-//            java.net.URL url = new URL(myUrl);
-//            HttpURLConnection connection = (HttpURLConnection) url
-//                    .openConnection();
+//            Log.d(">>>FILES", data);
 //
-//            connection.setReadTimeout(100000);
-//            connection.setConnectTimeout(100000);
-//            connection.setRequestMethod("GET");
-//            connection.setInstanceFollowRedirects(true);
-//            connection.setUseCaches(false);
-//            connection.setDoInput(true);
-//
-//            int responseCode = connection.getResponseCode();
-//
-////            if(context.getFilesDir().listFiles().length > 0) {
-////                for(int i = 0; i < context.getFilesDir().listFiles().length; i++) {
-////                    context.getFilesDir().listFiles()[i].delete();
-////                }
-////            }
-//
-//            if (responseCode == HttpURLConnection.HTTP_OK) { // 200 OK
-//                InputStreamReader isr = new InputStreamReader(connection.getInputStream(), "windows-1251");
-//                BufferedReader br = new BufferedReader(isr);
-//                String str=null;
-//                StringBuilder sb = new StringBuilder();
-//                while( (str = br.readLine()) !=null)
-//                {
-//                    sb.append(str);
+//            File directory = context.getFilesDir();
+//            if(directory.listFiles().length > 0) {
+//                for(int i = 0; i < directory.listFiles().length; i++) {
+//                    Log.d(">>>FILES", directory.listFiles()[i].getName());
+////                    directory.listFiles()[i].delete();
 //                }
-//                str = sb.toString();
-//                br.close();
-//
-//                File file = new File(context.getFilesDir(), guid.substring(guid.length() - 10));
-//
-//                FileWriter fw = new FileWriter(file.getAbsoluteFile());
-//                fw.write(str);
-//                fw.close();
-
-
-//            } else {
-//                data = connection.getResponseMessage() + " . Error Code : " + responseCode;
 //            }
-//            connection.disconnect();
-
-            Log.d(">>>FILES", data);
-
-            File directory = context.getFilesDir();
-            if(directory.listFiles().length > 0) {
-                for(int i = 0; i < directory.listFiles().length; i++) {
-                    Log.d(">>>FILES", directory.listFiles()[i].getName());
-//                    directory.listFiles()[i].delete();
-                }
-            }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
